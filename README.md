@@ -45,11 +45,25 @@
 Отчет о покрытии: `htmlcov/index.html`
 
 ### Структура проекта
+
+│   .coverage
 │   .gitignore
 │   pytest.ini
 │   README.md
 │   requirements.txt
 │   
+├───htmlcov
+│       .gitignore
+│       class_index.html
+│       coverage_html_cb_513c77fd.js
+│       favicon_32_cb_58284776.png
+│       function_index.html
+│       index.html
+│       keybd_closed_cb_ce680311.png
+│       status.json
+│       style_cb_ed8d5379.css
+│       z_c68eb0c7512457e4_burger_py.html
+│       
 ├───praktikum
 │       bun.py
 │       burger.py
@@ -62,6 +76,7 @@
 └───tests
         conftest.py
         test_burger.py
+        test_data.py
         __init__.py
 
 ### Запуск автотестов

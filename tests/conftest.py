@@ -1,11 +1,10 @@
-# tests/unit/conftest.py
 import pytest
 from unittest.mock import Mock
-
 from praktikum.burger import Burger
 from praktikum.bun import Bun
 from praktikum.ingredient import Ingredient
-from praktikum.ingredient_types import INGREDIENT_TYPE_SAUCE, INGREDIENT_TYPE_FILLING
+from praktikum.ingredient_types import INGREDIENT_TYPE_SAUCE
+from tests.test_data import TestData  
 
 
 @pytest.fixture
@@ -15,17 +14,17 @@ def burger():
 
 @pytest.fixture
 def sample_bun():
-    return Bun("Тестовая булочка", 100.0)
+    return Bun(TestData.BUN_NAME, TestData.BUN_PRICE)
 
 
 @pytest.fixture
 def sample_sauce():
-    return Ingredient(INGREDIENT_TYPE_SAUCE, "Тестовый соус", 50.0)
+    return Ingredient(TestData.SAUCE_TYPE, TestData.SAUCE_NAME, TestData.SAUCE_PRICE)
 
 
 @pytest.fixture
 def sample_filling():
-    return Ingredient(INGREDIENT_TYPE_FILLING, "Тестовая начинка", 150.0)
+    return Ingredient(TestData.FILLING_TYPE, TestData.FILLING_NAME, TestData.FILLING_PRICE)
 
 
 @pytest.fixture
@@ -45,13 +44,11 @@ def burger_with_ingredients(burger_with_bun, sample_sauce, sample_filling):
 @pytest.fixture
 def burger_with_three_ingredients(burger_with_bun):
     burger = burger_with_bun
-    ingredients = [
-        Ingredient(INGREDIENT_TYPE_SAUCE, "Соус 0", 10.0),
-        Ingredient(INGREDIENT_TYPE_FILLING, "Мясо 1", 20.0),
-        Ingredient(INGREDIENT_TYPE_SAUCE, "Соус 2", 30.0)
-    ]
+    ingredients = []
     
-    for ingredient in ingredients:
+    for ingredient_type, ingredient_name, ingredient_price in TestData.THREE_INGREDIENTS:
+        ingredient = Ingredient(ingredient_type, ingredient_name, ingredient_price)
+        ingredients.append(ingredient)
         burger.add_ingredient(ingredient)
     
     return burger, ingredients

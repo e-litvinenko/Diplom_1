@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 from praktikum.burger import Burger
 from praktikum.bun import Bun
 from praktikum.ingredient import Ingredient
-from praktikum.ingredient_types import INGREDIENT_TYPE_SAUCE, INGREDIENT_TYPE_FILLING
+from tests.test_data import TestData 
 
 
 class TestBurger:
@@ -17,10 +17,8 @@ class TestBurger:
         burger.set_buns(sample_bun)
         assert burger.bun == sample_bun
 
-    @pytest.mark.parametrize("ingredient_type,ingredient_name,ingredient_price", [
-        (INGREDIENT_TYPE_SAUCE, "hot sauce", 100.0),
-        (INGREDIENT_TYPE_FILLING, "beef", 150.0),
-    ])
+    @pytest.mark.parametrize("ingredient_type,ingredient_name,ingredient_price", 
+                             TestData.INGREDIENT_PARAMS)
     def test_add_ingredient_adds_one_ingredient(self, burger, ingredient_type, ingredient_name, ingredient_price):
         ingredient = Ingredient(ingredient_type, ingredient_name, ingredient_price)
         burger.add_ingredient(ingredient)
@@ -40,22 +38,16 @@ class TestBurger:
         burger.remove_ingredient(0)
         assert burger.ingredients == []
 
-    @pytest.mark.parametrize("index,new_index,expected_names", [
-        (2, 0, ["Соус 2", "Соус 0", "Мясо 1"]),
-        (0, 2, ["Мясо 1", "Соус 2", "Соус 0"]),
-        (1, 1, ["Соус 0", "Мясо 1", "Соус 2"]),
-    ])
+    @pytest.mark.parametrize("index,new_index,expected_names", 
+                             TestData.MOVE_INGREDIENT_CASES)  
     def test_move_ingredient(self, burger_with_three_ingredients, index, new_index, expected_names):
         burger, _ = burger_with_three_ingredients
         burger.move_ingredient(index, new_index)
         actual_names = [ingredient.get_name() for ingredient in burger.ingredients]
         assert actual_names == expected_names
 
-    @pytest.mark.parametrize("bun_price,ingredient_prices,expected", [
-        (100.0, [], 200.0),
-        (100.0, [50.0], 250.0),
-        (100.0, [50.0, 70.0, 30.0], 350.0),
-    ])
+    @pytest.mark.parametrize("bun_price,ingredient_prices,expected", 
+                             TestData.PRICE_TEST_CASES)  
     def test_get_price_calculation(self, burger, mock_bun, bun_price, ingredient_prices, expected):
         mock_bun.get_price.return_value = bun_price
         burger.set_buns(mock_bun)
@@ -67,16 +59,17 @@ class TestBurger:
 
     def test_get_receipt_exact_format_with_real_objects(self):
         burger = Burger()
-        burger.set_buns(Bun("Кунжутная булочка", 100.0))
-        burger.add_ingredient(Ingredient(INGREDIENT_TYPE_SAUCE, "кетчуп", 50.0))
-        burger.add_ingredient(Ingredient(INGREDIENT_TYPE_FILLING, "котлета", 150.0))
+        burger.set_buns(Bun(TestData.BUN_NAME, TestData.BUN_PRICE))
+        burger.add_ingredient(Ingredient(TestData.SAUCE_TYPE, TestData.SAUCE_NAME, TestData.SAUCE_PRICE))
+        burger.add_ingredient(Ingredient(TestData.FILLING_TYPE, TestData.FILLING_NAME, TestData.FILLING_PRICE))
         
-        with patch.object(burger, 'get_price', return_value=430.0):
+        with patch.object(burger, 'get_price', return_value=TestData.RECEIPT_TOTAL_PRICE):
             expected = (
-                "(==== Кунжутная булочка ====)\n"
-                "= sauce кетчуп =\n"
-                "= filling котлета =\n"
-                "(==== Кунжутная булочка ====)\n\n"
-                "Price: 430.0"
+                f"(==== {TestData.BUN_NAME} ====)\n"
+                f"= sauce {TestData.SAUCE_NAME} =\n"
+                f"= filling {TestData.FILLING_NAME} =\n"
+                f"(==== {TestData.BUN_NAME} ====)\n\n"
+                f"Price: {TestData.RECEIPT_TOTAL_PRICE}"
             )
+            
             assert burger.get_receipt() == expected
