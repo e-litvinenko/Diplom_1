@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Тестирование и покрытие
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Виртуальные окружения
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Операционная система
+.DS_Store
+Thumbs.db
